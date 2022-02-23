@@ -28,6 +28,7 @@
 #include "models/mlcommons_tiny_v01/vww/vww.h"
 #include "models/mnv2/mnv2.h"
 #include "models/pdti8/pdti8.h"
+#include "models/mnist/mnist.h"
 
 inline void no_menu() {}
 
@@ -51,6 +52,9 @@ static struct Menu MENU = {
 #endif
 #if defined(INCLUDE_MODEL_MNV2)
         MENU_ITEM(AUTO_INC_CHAR, "Mobile Net v2 models", mnv2_menu),
+#endif
+#if defined(INCLUDE_MODEL_MNIST) || defined(INCLUDE_ALL_TFLM_EXAMPLES)
+        MENU_ITEM(AUTO_INC_CHAR, "mnist model", mnist_menu),
 #endif
 #if defined(INCLUDE_MODEL_HPS)
         MENU_ITEM(AUTO_INC_CHAR, "HPS models", hps_model_menu),
