@@ -85,6 +85,9 @@ constexpr int kTensorArenaSize = const_max<int>(
 #ifdef INCLUDE_MODEL_MAGIC_WAND
     5 * 1024,
 #endif
+#ifdef INCLUDE_MODEL_MNIST
+    256 * 1024,
+#endif
 #ifdef INCLUDE_MODEL_MNV2
     800 * 1024,
 #endif
