@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef  SKIP_TFLM
-
 #include "tflite.h"
 
 #include <cstdint>
@@ -86,6 +84,9 @@ constexpr int kTensorArenaSize = const_max<int>(
 #endif
 #ifdef INCLUDE_MODEL_MAGIC_WAND
     5 * 1024,
+#endif
+#ifdef INCLUDE_MODEL_MNIST
+    256 * 1024,
 #endif
 #ifdef INCLUDE_MODEL_MNV2
     800 * 1024,
@@ -266,5 +267,3 @@ void tflite_classify() {
 }
 
 int8_t* get_input() { return interpreter->input(0)->data.int8; }
-
-#endif // SKIP_TFLM
