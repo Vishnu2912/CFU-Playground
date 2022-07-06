@@ -1,4 +1,15 @@
 # Implementations and corresponding results
+
+Projects corresponding to implementations
+
+1. initial - Naive Implementation
+2. soft_opt - Software Optimizations
+3. unroll - Loop Unrolled Implementation
+4. simd - SIMD Implementation
+5. soft_opt_filt - Filter storage Implementation upon software optimized version
+6. unroll_filt - Filter storage Implementation upon Loop Unrolled version
+7. simd_filt - Filter storage Implementation upon SIMD version 
+
 Ticks corresponding to each layer can be found below for each of the implementations - 1 tick correspond to 1024 cycles<br />
 Total number of cycles required after each optimization also can be noted below
 
