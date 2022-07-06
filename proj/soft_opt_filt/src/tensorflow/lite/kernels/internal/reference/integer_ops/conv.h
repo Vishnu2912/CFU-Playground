@@ -31,6 +31,7 @@ inline void ConvPerChannel(
     const int8_t* filter_data, const RuntimeShape& bias_shape,
     const int32_t* bias_data, const RuntimeShape& output_shape,
     int8_t* output_data) {
+  //These are the parameters that are constant throughout the execution	
   // Get parameters.
   /*const int32_t input_offset = params.input_offset;  // r = s(q - Z)
   const int stride_width = params.stride_width;
@@ -40,7 +41,9 @@ inline void ConvPerChannel(
   const int pad_width = params.padding_values.width;
   const int pad_height = params.padding_values.height;
   const int32_t output_offset = params.output_offset;*/
+  //Check to find out the parameters that are constant throughout the execution
   //print_conv_params(params, input_shape, filter_shape, output_shape);
+  //Replacing the parameters by literal values to reduce the memory access to these parameters
   const int32_t input_offset = 128;
   const int stride_width = 1;
   const int stride_height = 1;
@@ -71,23 +74,31 @@ inline void ConvPerChannel(
   // Check dimensions of the tensors.
   const int input_height = input_shape.Dims(1);
   const int input_width = input_shape.Dims(2);
+  //The filter_height and filter_width are replaced by their value i.e 3 below
   //const int filter_height = filter_shape.Dims(1);
   //const int filter_width = filter_shape.Dims(2);
   const int output_height = output_shape.Dims(1);
   const int output_width = output_shape.Dims(2);
+  //Dividing the convolution computations into input depth of 1 and 12
   if(input_depth == 1){
-  int count = 0;
-  int filter_count = 0;
+  //Block of code to access the filter values send them to cfu where it is stored	  
+  int count = 0;	//this is to track the storage location of the filter value in cfu
+  int filter_count = 0;	//this is to use the corresponding stored filter value for computation
+	//These series of for loops are the ones required to access the filter values
   	for (int out_channel = 0; out_channel < output_depth; ++out_channel) {
 	  for (int filter_y = 0; filter_y < 3; ++filter_y) {
 	    for (int filter_x = 0; filter_x < 3; ++filter_x) {
+		//Accessing filter values
 		int32_t filter_vals = filter_data[Offset(
                       filter_shape, out_channel, filter_y, filter_x, 0)];
+		//sending the filter values along with storage location counter
 		cfu_op0(2, count, filter_vals);
+		//incrementing the counter value to store the next filter value
 		count += 1;
 	    }
 	  }
 	}
+  //End of the block of code used for storage of filter values	  	
   for (int batch = 0; batch < batches; ++batch) {
     for (int out_y = 0; out_y < output_height; ++out_y) {
       const int in_y_origin = (out_y * stride_height) - pad_height;
@@ -110,9 +121,13 @@ inline void ConvPerChannel(
               }
 
               for (int in_channel = 0; in_channel < input_depth; ++in_channel) {
+		//innermost loop - involves accessing input values and sending them to CFU		      
                 int32_t input_val = input_data[Offset(input_shape, batch, in_y,
                                                       in_x, in_channel)];
+		//along with input values the filter_counter tracks the filter value corresponding to the input value for the CFU		      
                 acc = cfu_op0(/* funct7= */ 0, /* in0= */ input_val, /* in1= */ filter_count);
+		//Incrementing the filter_count unitl 108 and resetting after it
+		//There are 108 filter values involved for this computation		      
                 filter_count = (filter_count + 1)%108;
               }
             }
@@ -133,6 +148,7 @@ inline void ConvPerChannel(
     }
   }
 }
+//The other case of the convolution computation for input depth of 12
 if(input_depth == 12)
 {
   for (int batch = 0; batch < batches; ++batch) {
