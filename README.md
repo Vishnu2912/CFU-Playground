@@ -1,5 +1,17 @@
 # CFU Playground
 
+To access the implementations done please navigate to proj section and find the below implementations
+1. initial - Naive Implementation
+2. soft_opt - Software Optimizations
+3. unroll - Loop Unrolled Implementation
+4. simd - SIMD Implementation
+
+Further for each of the above versions a better Implementaion done by storing and using the distinct filter values
+
+5. soft_opt_filt - Filter storage Implementation upon software optimized version
+6. unroll_filt - Filter storage Implementation upon Loop Unrolled version
+7. simd_filt - Filter storage Implementation upon SIMD version 
+
 Want a faster ML processor?   Do it yourself!
 
 This project provides a framework that an engineer, intern, or student can use to design and evaluate **enhancements** to an FPGA-based “soft” processor, specifically to increase the performance of machine learning (ML) tasks.   The goal is to abstract away most infrastructure details so that the user can get up to speed quickly and focus solely on adding new processor instructions, exploiting them in the computation, and measuring the results.
