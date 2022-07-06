@@ -17,6 +17,8 @@ limitations under the License.
 
 #include "tensorflow/lite/kernels/internal/common.h"
 #include "playground_util/print_params.h"
+#include "perf.h"
+#include<stdio.h>
 
 namespace tflite {
 namespace reference_integer_ops {
