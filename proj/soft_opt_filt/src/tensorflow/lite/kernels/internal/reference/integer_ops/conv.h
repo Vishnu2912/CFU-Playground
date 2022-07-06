@@ -98,7 +98,7 @@ inline void ConvPerChannel(
 	    }
 	  }
 	}
-  //End of the block of code used for storage of filter values	  	
+  //End of the block of code used for storage of distinct filter values	  	
   for (int batch = 0; batch < batches; ++batch) {
     for (int out_y = 0; out_y < output_height; ++out_y) {
       const int in_y_origin = (out_y * stride_height) - pad_height;
