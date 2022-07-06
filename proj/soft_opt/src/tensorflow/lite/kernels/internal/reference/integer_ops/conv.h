@@ -29,6 +29,7 @@ inline void ConvPerChannel(
     const int8_t* filter_data, const RuntimeShape& bias_shape,
     const int32_t* bias_data, const RuntimeShape& output_shape,
     int8_t* output_data) {
+  //These are the parameters that are constant throughout the execution
   // Get parameters.
   /*const int32_t input_offset = params.input_offset;  // r = s(q - Z)
   const int stride_width = params.stride_width;
@@ -38,7 +39,9 @@ inline void ConvPerChannel(
   const int pad_width = params.padding_values.width;
   const int pad_height = params.padding_values.height;
   const int32_t output_offset = params.output_offset;*/
+  //Check to find out the parameters that are constant throughout the execution
   //print_conv_params(params, input_shape, filter_shape, output_shape);
+  //Replacing the parameters by literal values to reduce the memory access to these parameters
   const int32_t input_offset = 128;
   const int stride_width = 1;
   const int stride_height = 1;
@@ -95,6 +98,7 @@ inline void ConvPerChannel(
               }
 
               for (int in_channel = 0; in_channel < input_depth; ++in_channel) {
+                //innermost loop - consists of accessing filter and input values and accumulates them
                 int32_t input_val = input_data[Offset(input_shape, batch, in_y,
                                                       in_x, in_channel)];
                 int32_t filter_val = filter_data[Offset(
