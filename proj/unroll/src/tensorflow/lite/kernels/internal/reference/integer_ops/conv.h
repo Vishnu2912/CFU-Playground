@@ -68,6 +68,7 @@ inline void ConvPerChannel(
   const int output_height = output_shape.Dims(1);
   const int output_width = output_shape.Dims(2);
  //Dividing the convolution computations into input depth of 1 and 12
+ //Convolution layer with input depth of 12 - Unroll Implementation
  if(input_depth == 12){
     for (int batch = 0; batch < batches; ++batch) {
       for (int out_y = 0; out_y < output_height; ++out_y) {
