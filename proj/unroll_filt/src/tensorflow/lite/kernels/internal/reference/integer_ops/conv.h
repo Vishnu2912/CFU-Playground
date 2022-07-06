@@ -68,6 +68,7 @@ inline void ConvPerChannel(
   const int output_height = output_shape.Dims(1);
   const int output_width = output_shape.Dims(2);
  //Dividing the convolution computations into input depth of 1 and 12
+ //Convolution layer with input depth of 12 - Unrolled with filter storage Implementation   
  if(input_depth == 12){
  //Block of code to access the filter values send them to cfu where it is stored	 
  //filter_count is to correspond the stored filter value to be used for computation in CFU
@@ -111,6 +112,10 @@ inline void ConvPerChannel(
         for (int out_x = 0; out_x < output_width; ++out_x) {
           const int in_x_origin = out_x;
           for (int out_channel = 0; out_channel < output_depth; ++out_channel) {
+	    //resetting the accumulator
+            //the accumulation is done completely in CFU and the result is sent back 
+      	    //This block of code is used for analysis as the accumulator results
+      	    //are reset computed and sent back once wihtin this loop
             int32_t acc = cfu_op0(/* funct7= */ 1, 0, 0); // resets acc
             for (int filter_y = 0; filter_y < 3; ++filter_y) {
               const int in_y = in_y_origin + filter_y;
