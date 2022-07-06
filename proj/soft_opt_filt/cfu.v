@@ -11,9 +11,10 @@ module Cfu (
   input               clk
 );
   localparam InputOffset = $signed(9'd128);
+  //registers to store the distinct filter values
   reg [31:0] filt_vals_1[0:107];
-
   wire signed [31:0] sum_prods_1;
+  //MAC operation
   assign sum_prods_1 = ($signed(cmd_payload_inputs_0) + InputOffset)
                   * $signed(filt_vals_1[cmd_payload_inputs_1]);
 
@@ -29,14 +30,15 @@ module Cfu (
       rsp_valid <= ~rsp_ready;
     end else if (cmd_valid) begin
       rsp_valid <= 1'b1;
-      // Accumulate step:
       if(cmd_payload_function_id[9:3] == 1) begin
-       rsp_payload_outputs_0 <= 32'b0;
+       rsp_payload_outputs_0 <= 32'b0;  //resetting the accumulator
       end
+      //using the below function id (in software code) to store the filter values 
       else if(cmd_payload_function_id[9:3] == 2) begin
-      	//filter value are stored here
+      	//filter value are stored here at the corresponding position given by the software code
       	filt_vals_1[cmd_payload_inputs_0] <= cmd_payload_inputs_1;
       end
+      //Accumulating the result
       else begin
       	rsp_payload_outputs_0 <= rsp_payload_outputs_0 + sum_prods_1;
       end
