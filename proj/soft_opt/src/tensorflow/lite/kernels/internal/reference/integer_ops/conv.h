@@ -98,7 +98,7 @@ inline void ConvPerChannel(
               }
 
               for (int in_channel = 0; in_channel < input_depth; ++in_channel) {
-                //innermost loop - consists of accessing filter and input values and accumulates them
+                //innermost loop - involves accessing input and filter values and accumulates them
                 int32_t input_val = input_data[Offset(input_shape, batch, in_y,
                                                       in_x, in_channel)];
                 int32_t filter_val = filter_data[Offset(
