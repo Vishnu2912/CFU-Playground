@@ -32,6 +32,7 @@ inline void ConvPerChannel(
     const int8_t* filter_data, const RuntimeShape& bias_shape,
     const int32_t* bias_data, const RuntimeShape& output_shape,
     int8_t* output_data) {
+  //These are the parameters that are constant throughout the execution
   // Get parameters.
   /*const int32_t input_offset = params.input_offset;  // r = s(q - Z)
   const int stride_width = params.stride_width;
@@ -61,12 +62,12 @@ inline void ConvPerChannel(
   // Check dimensions of the tensors.
   const int input_height = input_shape.Dims(1);
   const int input_width = input_shape.Dims(2);
+  //The filter_height and filter_width are replaced by their value i.e 3 below
   //const int filter_height = filter_shape.Dims(1);
   //const int filter_width = filter_shape.Dims(2);
   const int output_height = output_shape.Dims(1);
   const int output_width = output_shape.Dims(2);
-  //int32_t input_val;
-  //int32_t filter_val;
+ //Dividing the convolution computations into input depth of 1 and 12
  if(input_depth == 12){
     for (int batch = 0; batch < batches; ++batch) {
       for (int out_y = 0; out_y < output_height; ++out_y) {
@@ -89,6 +90,8 @@ inline void ConvPerChannel(
                   continue;
                 }
                 for (int in_channel = 0; in_channel < input_depth; in_channel += 4) {
+                  //innermost loop - unrolled by a factor of 4 involves accessing input and filter values 
+                  //and accumulating them - 4 such computations are carried out within this loop
                   int32_t input_val = input_data[Offset(input_shape, batch, in_y,
                                                           in_x, in_channel)];
                   int32_t filter_val = filter_data[Offset(
@@ -131,6 +134,7 @@ inline void ConvPerChannel(
       }
     }
   }
+  //convolution for input depth of 1 - normal software implementation
   if(input_depth == 1) {
     for (int batch = 0; batch < batches; ++batch) {
       for (int out_y = 0; out_y < output_height; ++out_y) {
@@ -152,6 +156,7 @@ inline void ConvPerChannel(
                 if (!is_point_inside_image) {
                   continue;
                 }
+                //innermost loop - involves accessing input and filter values and accumulating them
                 int32_t input_val_1 = input_data[Offset(input_shape, batch, in_y,
                                                           in_x, 0)];
                 int32_t filter_val_1 = filter_data[Offset(
