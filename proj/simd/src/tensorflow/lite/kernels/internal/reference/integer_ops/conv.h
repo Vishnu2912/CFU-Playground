@@ -32,6 +32,7 @@ inline void ConvPerChannel(
     const int8_t* filter_data, const RuntimeShape& bias_shape,
     const int32_t* bias_data, const RuntimeShape& output_shape,
     int8_t* output_data) {
+  //These are the parameters that are constant throughout the execution
   // Get parameters.
   /*const int32_t input_offset = params.input_offset;  // r = s(q - Z)
   const int stride_width = params.stride_width;
@@ -41,6 +42,7 @@ inline void ConvPerChannel(
   const int pad_width = params.padding_values.width;
   const int pad_height = params.padding_values.height;*/
   const int32_t output_offset = params.output_offset;
+  //The filter_height and filter_width are replaced by their value    
   const int filter_height = 3;
   const int filter_width = 3;
 
@@ -67,8 +69,8 @@ inline void ConvPerChannel(
   //const int filter_width = filter_shape.Dims(2);
   const int output_height = output_shape.Dims(1);
   const int output_width = output_shape.Dims(2);
-  //int32_t input_val;
-  //int32_t filter_val;
+ //Dividing the convolution computations into input depth of 1 and 12
+ //Convolution layer with input depth of 12 - SIMD Implementation   
  if(input_depth == 12){
     for (int batch = 0; batch < batches; ++batch) {
       for (int out_y = 0; out_y < output_height; ++out_y) {
@@ -76,6 +78,10 @@ inline void ConvPerChannel(
         for (int out_x = 0; out_x < output_width; ++out_x) {
           const int in_x_origin = out_x;
           for (int out_channel = 0; out_channel < output_depth; ++out_channel) {
+      //resetting the accumulator
+      //the accumulation is done completely in CFU and the result is sent back 
+      //This block of code is used for analysis as the accumulator results
+      //are reset computed and sent back once wihtin this loop              
       int32_t acc = cfu_op0(/* funct7= */ 1, 0, 0); // resets acc
       for (int filter_y = 0; filter_y < filter_height; ++filter_y) {
         const int in_y = in_y_origin + filter_y;
@@ -92,6 +98,7 @@ inline void ConvPerChannel(
           }
 
           for (int in_channel = 0; in_channel < input_depth; in_channel += 4) {
+            //innermost loop - involves pointing the input anf filter values and sending them for accumulation to the CFU              
             uint32_t input_val = *((uint32_t *)(input_data + Offset(
                 input_shape, batch, in_y, in_x, in_channel)));
 
@@ -112,11 +119,13 @@ inline void ConvPerChannel(
       acc = std::min(acc, output_activation_max);
       output_data[Offset(output_shape, batch, out_y, out_x, out_channel)] =
           static_cast<int8_t>(acc);
+    //End of the block of code within out_channel for loop - accumulator result is sent back              
     }
         }
       }
     }
   }
+  //convolution layer with input depth of 1 - using normal software implementation
   if(input_depth == 1) {
     for (int batch = 0; batch < batches; ++batch) {
       for (int out_y = 0; out_y < output_height; ++out_y) {
