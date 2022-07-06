@@ -1,4 +1,6 @@
 # Implementations and corresponding results
+Ticks corresponding to each layer can be found below for each of the implementations - 1 tick correspond to 1024 cycles<br />
+Total number of cycles required after each optimization also can be noted below
 
 1. initial - Naive Implementation
 
@@ -11,6 +13,7 @@
     12M (    11920584) cycles total<br />
 OK   Golden tests passed
 
+2. soft_opt - Software Optimizations
 
 "Event","Tag","Ticks"<br />
 0,CONV_2D,2403<br />
@@ -21,6 +24,8 @@ OK   Golden tests passed
     10M (    10349506) cycles total<br />
 OK   Golden tests passed
 
+3. unroll - Loop Unrolled Implementation
+
 "Event","Tag","Ticks"<br />
 0,CONV_2D,1676<br />
 1,CONV_2D,5608<br />
@@ -30,6 +35,7 @@ OK   Golden tests passed
   7760k (     7760048) cycles total<br />
 OK   Golden tests passed
 
+4. simd - SIMD Implementation
 
 "Event","Tag","Ticks"<br />
 0,CONV_2D,1689<br />
@@ -40,6 +46,9 @@ OK   Golden tests passed
   3669k (     3668930) cycles total<br />
 OK   Golden tests passed
 
+##### Further for each of the above versions a better Implementaion done by storing and using the distinct filter value
+
+5. soft_opt_filt - Filter storage Implementation upon software optimized version
 
 "Event","Tag","Ticks"<br />
 0,CONV_2D,1188<br />
@@ -50,6 +59,7 @@ OK   Golden tests passed
   7160k (     7160029) cycles total<br />
 OK   Golden tests passed
 
+6. unroll_filt - Filter storage Implementation upon Loop Unrolled version
 
 "Event","Tag","Ticks"<br />
 0,CONV_2D,1298<br />
@@ -60,6 +70,7 @@ OK   Golden tests passed
   4382k (     4381951) cycles total<br />
 OK   Golden tests passed
 
+7. simd_filt - Filter storage Implementation upon SIMD version 
 
 "Event","Tag","Ticks"<br />
 0,CONV_2D,1299<br />
